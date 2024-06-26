@@ -47,15 +47,15 @@ void push(struct Stack* stack, char item)
 char pop(struct Stack* stack)
 {
     if (isEmpty(stack))
-        return INT_MIN;
+        return '$';
     return stack->array[stack->top--];
 }
 
 // Function to return the top from stack without removing it
-int peek(struct Stack* stack)
+char peek(struct Stack* stack)
 {
     if (isEmpty(stack))
-        return INT_MIN;
+        return '$';
     return stack->array[stack->top];
 }
 

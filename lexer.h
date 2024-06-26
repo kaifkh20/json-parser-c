@@ -72,7 +72,7 @@ struct Response lexer(char* json_string){
 
     size_t len_json_string = strlen(json_string);
 
-    printf("%s is the string,%zu is size\n",json_string,len_json_string);
+    // printf("%s is the string,%zu is size\n",json_string,len_json_string);
     // Token* token_container = (Token*)(sizeof(Token)*len_json_string);
 
     Token* token_container = (Token*) malloc(len_json_string*sizeof(Token));
@@ -81,7 +81,7 @@ struct Response lexer(char* json_string){
         consume_token(json_string[i],token_container,i);
     }
 
-    debug_print(token_container,len_json_string);
+    // debug_print(token_container,len_json_string);
     // free(token_container);
     struct Response resp;
     resp.token_container = token_container;
