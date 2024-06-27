@@ -5,8 +5,8 @@ beforeAll(async()=>{
     await proc.exited
 })
 
-async function runScript(){
-    const proc = Bun.spawn(["./jp"])
+async function runScript(file_path){
+    const proc = Bun.spawn(["./jp","-f",`${file_path}`])
     const output = (await new Response(proc.stdout).text())
 
     await proc.exited
@@ -15,10 +15,11 @@ async function runScript(){
 }
 
 test("Check for Valid Empty JSON",async()=>{
-    const output = await runScript()
-
+    // const json_string = "{}"
+    const output = await runScript("test/tests_file/test1.json")
     expect(output).toEqual("Succesfully Parsed\n")
 })
+
 
 afterAll(()=>{
     const proc = Bun.spawn(['make','clean'])
