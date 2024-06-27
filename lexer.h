@@ -160,14 +160,14 @@ struct Response lexer(char* json_string){
     }
     
         // token = next_token(json_string,i);
-    // Token* token_container_new = (Token*) malloc(idx_tc*sizeof(Token)); 
+    Token* token_container_new = (Token*) malloc(idx_tc*sizeof(Token)); 
     // token_container = (Token*) realloc()
-    // memcpy(token_container_new,token_container,idx_tc);
-    // debug_print(token_container,idx_tc);
+    memcpy(&token_container_new,&token_container,idx_tc);
+    debug_print(token_container_new,idx_tc);
     // free(token_container);
 
     struct Response resp;
-    resp.token_container = token_container;
+    resp.token_container = token_container_new;
     resp.length = idx_tc;
 
     return resp;
