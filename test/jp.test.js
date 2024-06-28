@@ -20,6 +20,10 @@ test("Check for Valid Empty JSON",async()=>{
     expect(output).toEqual("Succesfully Parsed\n")
 })
 
+test("Checking for single key value pair",async()=>{
+    const output = await runScript("test/tests_file/test2.json")
+    expect(output).toEqual("value\nSuccesfully Parsed\n")
+})
 
 afterAll(()=>{
     const proc = Bun.spawn(['make','clean'])

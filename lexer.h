@@ -34,6 +34,10 @@ char* enum_to_string(enum TokenType t_type){
         return "StartObject";
     case EndObject:
         return "EndObject";
+    case StringKey:
+        return "StringKey";
+    case StringValue:
+        return "StringValue";
     default:
         return "Invalid";
         break;
@@ -50,7 +54,7 @@ char next_token(char* json_string,int i){
 int consume_token(char token,Token* token_container,int i,char* json_string,int idx_tc){
 
     Token t;
-    printf("%c token",token);
+    // printf("%c token",token);
     // printf("index %d",*i);
 
     int index = i;
@@ -89,8 +93,9 @@ int consume_token(char token,Token* token_container,int i,char* json_string,int 
             ++idx;
             token_c = next_token(json_string,idx);
         }
-        token_c = next_token(json_string,idx++);
-        if(strncmp(&token_c,":",1)==0){
+        token_c = next_token(json_string,++idx);
+        // printf("tokenc after loop%c\n",token_c);
+        if(token_c==':'){
             // printf("reached here");
             strcpy(t.ch,string);
             t.t_type = StringKey;
@@ -163,7 +168,7 @@ struct Response lexer(char* json_string){
     Token* token_container_new = (Token*) malloc(idx_tc*sizeof(Token)); 
     // token_container = (Token*) realloc()
     memcpy(&token_container_new,&token_container,idx_tc);
-    debug_print(token_container_new,idx_tc);
+    // debug_print(token_container_new,idx_tc);
     // free(token_container);
 
     struct Response resp;
