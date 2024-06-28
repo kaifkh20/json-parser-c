@@ -10,7 +10,8 @@ enum TokenType{
     EndObject,
     StringKey,
     StringValue,
-    KeyValueSeperator
+    KeyValueSeperator,
+    Comma
 };
 
 struct Token{
@@ -38,6 +39,8 @@ char* enum_to_string(enum TokenType t_type){
         return "StringKey";
     case StringValue:
         return "StringValue";
+    case Comma:
+        return "Comma";
     default:
         return "Invalid";
         break;
@@ -55,7 +58,7 @@ int consume_token(char token,Token* token_container,int i,char* json_string,int 
 
     Token t;
     // printf("%c token",token);
-    // printf("index %d",*i);
+    // printf("index %d",idx_tc);
 
     int index = i;
     char *tc = (char*)malloc(sizeof(char)*2);
@@ -121,12 +124,18 @@ int consume_token(char token,Token* token_container,int i,char* json_string,int 
         strcpy(t.ch,tc);
         t.t_type = KeyValueSeperator;
         break;
+    case ',':
+        tc[0] = token;
+        tc[1] = '\0';
+        strcpy(t.ch,tc);
+        t.t_type = Comma;
+        break;
     case ' ':
         break;
     // case '':
     //     break;
     default:
-        printf("%c not valid",token);
+        printf("Lexical Error: %c not valid\n",token);
         exit(EXIT_FAILURE);
         break;
     }
@@ -152,7 +161,7 @@ struct Response lexer(char* json_string){
     // Token* token_container = (Token*)(sizeof(Token)*len_json_string);
 
     Token* token_container = (Token*) malloc(len_json_string*sizeof(Token));
-
+    // printf("reaching here");
     // int i = 0;
     int idx_tc = 0;
     for (int i=0;i<len_json_string;){
@@ -160,20 +169,12 @@ struct Response lexer(char* json_string){
         // printf("%c token\n",token);
         i = consume_token(token,token_container,i,json_string,idx_tc);
         idx_tc++;
-        // printf("returned %d to cosume %c\n",i,next_token(json_string,i));
-        // ++i;
     }
-    
-        // token = next_token(json_string,i);
-    Token* token_container_new = (Token*) malloc(idx_tc*sizeof(Token)); 
-    // token_container = (Token*) realloc()
-    memcpy(&token_container_new,&token_container,idx_tc);
-    // debug_print(token_container_new,idx_tc);
-    // free(token_container);
 
     struct Response resp;
-    resp.token_container = token_container_new;
+    resp.token_container = token_container;
     resp.length = idx_tc;
+
 
     return resp;
 }

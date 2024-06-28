@@ -22,7 +22,22 @@ test("Check for Valid Empty JSON",async()=>{
 
 test("Checking for single key value pair",async()=>{
     const output = await runScript("test/tests_file/test2.json")
-    expect(output).toEqual("Succesfully Parsed\nkey:key,value:value\n")
+    expect(output).toEqual("Succesfully Parsed\nkey:value\n")
+})
+
+test("Checking for more than one key value pair",async()=>{
+    const output = await runScript("test/tests_file/test3.json")
+    expect(output).toEqual("Succesfully Parsed\nkey1:value1\nkey2:value2\nkey$:value[];\n")
+})
+
+test("Checking Invalid Syntax check",async()=>{
+    const output = await runScript("test/tests_file/test4.json")
+    expect(output).toEqual("Parser Error : Invalid Syntax\nOperation Aborted\n")
+})
+
+test("Check for Lexical Error",async()=>{
+    const output = await runScript("test/tests_file/test5.json")
+    expect(output).toEqual("Lexical Error: $ not valid\n")
 })
 
 afterAll(()=>{

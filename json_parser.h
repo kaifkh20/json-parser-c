@@ -11,6 +11,10 @@ ResponseKV json_parser(int argc,char* argv[]){
 
     FILE* file;
     file = fopen(file_name,"r");
+    if(file==NULL){
+        printf("File does not exits\n");
+        exit(EXIT_FAILURE);
+    }
     fseek(file,0,SEEK_END);
     long fsize = ftell(file);
     rewind(file);

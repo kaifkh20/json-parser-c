@@ -54,7 +54,8 @@ void parse_object(Token* token_container,int len,int idx,KeyValue arr[],size_t* 
 
     // printf("%d",idx);
     struct Stack* stack = createStack(len);
-    for(int i=idx;i<len;i++){
+    int i =0;
+    for(i=idx;i<len;i++){
         char* token = token_container[i].ch;
         // TokenType type = token_container[i].t_type; 
         enum TokenType type_token = token_container[i].t_type;
@@ -63,15 +64,14 @@ void parse_object(Token* token_container,int len,int idx,KeyValue arr[],size_t* 
             // parse_object(token_container,len,i++,arr);
             push(stack,token_container[i].ch);
         }
-        else if(token=="}"){
-            if(isEmpty(stack)==1 || pop(stack)!="{"){
+        else if(strcmp(token,"}")==0){
+            // printf("%s",peek(stack));
+            if(isEmpty(stack)==1 || strcmp(pop(stack),"{")!=0){
                 printf("Parser Error : Invalid Syntax\nOperation Aborted\n");
                 free(stack);
                 exit(EXIT_FAILURE);
-            }else{
-                return ;
-            } 
-        }else if(type_token==StringKey){
+            }
+        }else if(type_token==StringKey && isEmpty(stack)==0){
             // printf("reaching here");
             Key key;
             strcpy(key.key,token);
@@ -84,8 +84,20 @@ void parse_object(Token* token_container,int len,int idx,KeyValue arr[],size_t* 
             (*idx_arr)++;
         }  
 
+        if(i!=(len-1)&&isEmpty(stack)==1){
+            // printf("")
+            printf("Parser Error : Invalid Syntax\nOperation Aborted\n");
+            exit(EXIT_FAILURE);
+        }
+
+        
     } 
 
+    if(i==len && isEmpty(stack)==0){
+        printf("Parser Error : Invalid Syntax\nOperation Aborted\n");
+        free(stack);
+        exit(EXIT_FAILURE);
+    }
     free(stack);
 }
 
