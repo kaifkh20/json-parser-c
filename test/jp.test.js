@@ -6,7 +6,7 @@ beforeAll(async()=>{
 })
 
 async function runScript(file_path){
-    const proc = Bun.spawn(["./jp","-f",`${file_path}`])
+    const proc = Bun.spawn(["./jp","-f",`${file_path}`,"--test"])
     const output = (await new Response(proc.stdout).text())
 
     await proc.exited
@@ -22,7 +22,7 @@ test("Check for Valid Empty JSON",async()=>{
 
 test("Checking for single key value pair",async()=>{
     const output = await runScript("test/tests_file/test2.json")
-    expect(output).toEqual("value\nSuccesfully Parsed\n")
+    expect(output).toEqual("Succesfully Parsed\nkey:key,value:value\n")
 })
 
 afterAll(()=>{
