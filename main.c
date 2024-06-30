@@ -18,6 +18,13 @@ int main(int argc,char* argv[]){
         }
     }
     
+    // Freeing memory 
+    for(int i=0;i<kv.object.size;i++){
+        if(kv.object.arr[i].Value.val_type==OBJECT_TYPE){
+            free(kv.object.arr[i].Value.value.obj_val);
+        }
+    }
+
     // free(kv.lookup);
     // free(kv)
 
@@ -27,5 +34,6 @@ int main(int argc,char* argv[]){
     //     printf("key:%s , value:%s\n",kv.arr[i].Key.key,kv.arr[i].Value.value);
     // }
     // printf("%s\n",kv.arr[0].Key.key);
+    // while(1){}
     return 0;
 }
