@@ -2,6 +2,7 @@
 #define JSON_PARSER_H
 #include "lexer.h"
 #include "parser.h"
+#include <ctype.h>
 
 // #include <stdio.h>
 ResponseKV json_parser(int argc,char* argv[]){
@@ -27,6 +28,16 @@ ResponseKV json_parser(int argc,char* argv[]){
     string [fsize] = 0;
 
     struct Response res_lexer;
+    
+    //Flat lining string 
+
+    char *out = string;
+    for(char *in=string;*in!='\0';in++){
+        if(!isspace(*in)){
+            *out++ = *in;
+        }
+    }
+    *out = '\0';
 
     // printf("Enter your json string\n");
     // char* json_string;
@@ -37,6 +48,7 @@ ResponseKV json_parser(int argc,char* argv[]){
     // printf("Lexer completed\n");
     ResponseKV res;
     res = parser(res_lexer.token_container,res_lexer.length);    
+
     
     free(res_lexer.token_container);
     free(string);    

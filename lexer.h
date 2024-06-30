@@ -130,10 +130,6 @@ int consume_token(char token,Token* token_container,int i,char* json_string,int 
         strcpy(t.ch,tc);
         t.t_type = Comma;
         break;
-    case ' ':
-        break;
-    // case '':
-    //     break;
     default:
         printf("Lexical Error: %c not valid\n",token);
         exit(EXIT_FAILURE);
@@ -172,7 +168,7 @@ struct Response lexer(char* json_string){
         i = consume_token(token,token_container,i,json_string,idx_tc);
         idx_tc++;
     }
-
+    // debug_print(token_container,idx_tc);
     struct Response resp;
     resp.token_container = token_container;
     resp.length = idx_tc;
