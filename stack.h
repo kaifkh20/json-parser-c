@@ -55,7 +55,7 @@ char* pop(struct Stack* stack)
 char* peek(struct Stack* stack)
 {
     if (isEmpty(stack))
-        return "$";
+        return " ";
     return stack->array[stack->top];
 }
 

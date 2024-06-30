@@ -6,9 +6,10 @@ int main(int argc,char* argv[]){
     // printf("%d",kv.size);
     // printf("%d",argc);
     // printf("%s",argv[3]);
+    // printf("%d",kv.object.size);
     if(argc>3 && strcmp(argv[3],"--test")==0){
-        for(int i=0;i<kv.size;i++){
-            printf("%s:%s\n",kv.arr[i].Key.key,kv.arr[i].Value.value);
+        for(int i=0;i<kv.object.size;i++){
+            printf("%s:%s\n",kv.object.arr[i].Key.key,kv.object.arr[i].Value.value.string_val);
         }
     }
     
