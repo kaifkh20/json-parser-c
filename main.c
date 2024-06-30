@@ -9,6 +9,11 @@ int main(int argc,char* argv[]){
     // printf("%d",kv.object.size);
     if(argc>3 && strcmp(argv[3],"--test")==0){
         for(int i=0;i<kv.object.size;i++){
+            // printf(/)
+            if(kv.object.arr[i].Value.val_type==OBJECT_TYPE){
+                printf("%s:<Object>\n",kv.object.arr[i].Key.key);
+                continue;
+            }
             printf("%s:%s\n",kv.object.arr[i].Key.key,kv.object.arr[i].Value.value.string_val);
         }
     }

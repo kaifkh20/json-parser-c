@@ -153,6 +153,8 @@ void debug_print(Token* token_container,int len){
     }
 }
 
+
+
 struct Response lexer(char* json_string){
 
     size_t len_json_string = strlen(json_string);
@@ -174,6 +176,7 @@ struct Response lexer(char* json_string){
     struct Response resp;
     resp.token_container = token_container;
     resp.length = idx_tc;
+
 
 
     return resp;

@@ -30,6 +30,11 @@ test("Checking for more than one key value pair",async()=>{
     expect(output).toEqual("Succesfully Parsed\nkey1:value1\nkey2:value2\nkey$:value[];\n")
 })
 
+test("Checking for Object as values",async()=>{
+    const output = await runScript("test/tests_file/test6.json")
+    expect(output).toEqual("Succesfully Parsed\nkey1:<Object>\n")
+})
+
 test("Checking Invalid Syntax check",async()=>{
     const output = await runScript("test/tests_file/test4.json")
     expect(output).toEqual("Parser Error : Invalid Syntax\nOperation Aborted\n")

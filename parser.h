@@ -11,6 +11,7 @@ typedef union value value;
 
 typedef enum ValueType{
     STRING,
+    OBJECT_TYPE
 }ValueType;
 
 
@@ -46,7 +47,7 @@ typedef struct Object{
 
 
 
-
+typedef union value value;
 
 // typedef struct KeyValue KeyValue;
 
@@ -76,14 +77,13 @@ char* lookup(char* key,ResponseKV* self){
     return "Invalid Key";
 }
 
-Object parse_object(Token* token_container,int len,int* idx,struct Stack* stack){
+Object* parse_object(Token* token_container,int len,int* idx,struct Stack* stack,int if_sub_obj){
 
+    // printf("Function called with params %d %d\n",len,*idx);
     // printf("%d",*idx);
     KeyValue arr[100];
     size_t idx_arr = 0;
-
-
-    Object obj;
+    Object *obj = (Object*)malloc(sizeof(Object));
     // struct Stack* stack = createStack(len);
 
     // printf("%s starting\n",peek(stack));
@@ -99,10 +99,25 @@ Object parse_object(Token* token_container,int len,int* idx,struct Stack* stack)
         // printf("%s\n",token);
         if(strcmp(token,"{")==0){
             push(stack,token_container[i].ch);
-            if(i>0 && strcmp(token_container[i-1].ch,":")){
+            // printf("%s pushed into stack\n",token);
+            if(i>0 && strcmp(token_container[i-1].ch,":")==0){
+                // printf("reaching here");
+                *idx = i;
                 *idx = ++(*idx);
-                obj = parse_object(token_container,len,idx,stack);            
+                // printf("Index after idx op %d\n",*idx);
+
+                obj = parse_object(token_container,len,idx,stack,1);            
                 i = *idx;
+                // printf("%d after\n",i);
+                // idx_arr++;
+                char* key = token_container[i-2].ch;
+                // printf("Key for object %s\n",key);
+                Value val;
+                val.val_type = OBJECT_TYPE;
+                val.value.obj_val = obj;
+                arr[idx_arr].Value =  val;
+                idx_arr++;
+            // printf("returned object");
             }
             // printf("Object returned %d\n",obj.size);
             // printf("idx after obj returns %d",*idx);
@@ -122,7 +137,20 @@ Object parse_object(Token* token_container,int len,int* idx,struct Stack* stack)
                 free(stack);
                 exit(EXIT_FAILURE);
             }
-            pop(stack);
+            pop(stack);        
+            if(if_sub_obj){
+                
+                
+                memcpy(obj->arr,arr,100*sizeof(KeyValue));
+                obj->size = idx_arr;
+
+                // if(obj->size==0){
+                //     free(obj);
+                // }
+                // printf("Size of idx_arr %d",obj.size);
+                *idx = i;
+                return obj;
+            }
         }else if(type_token==StringKey && isEmpty(stack)==0){
             // printf("reaching here");
             Key key;
@@ -132,7 +160,9 @@ Object parse_object(Token* token_container,int len,int* idx,struct Stack* stack)
         }else if(type_token==StringValue){
             Value val;
             strcpy(val.value.string_val,token);
+            val.val_type = STRING;
             arr[idx_arr].Value = val;
+        
             idx_arr++;
         }  
         
@@ -148,20 +178,22 @@ Object parse_object(Token* token_container,int len,int* idx,struct Stack* stack)
     if(i==len && !isEmpty(stack)){
         // printf("%d",isEmpty(stack));
         // printf("reaching here");
+        printf("%s\n",peek(stack));
         printf("Parser Error : Invalid Syntax\nOperation Aborted\n");
         free(stack);
         exit(EXIT_FAILURE);
     }
+    memcpy(obj->arr,arr,100*sizeof(KeyValue));
+    obj->size = idx_arr;
+
+    // if(obj->size==0){
+    //     free(obj);
+    // }
+    // printf("Size of idx_arr %d",obj.size);
+    *idx = i;
+    return obj;
     // free(stack);
 
-    memcpy(obj.arr,arr,100*sizeof(KeyValue));
-    obj.size = idx_arr;
-
-    // printf("Size of idx_arr %d",obj.size);
-
-    *idx = i;
-
-    return obj;
 }
 
 
@@ -171,11 +203,11 @@ ResponseKV parser(Token* token_container,int len){
     struct Stack* stack = createStack(len);
     // Object obj;
     int idx = 0;
-    Object obj = parse_object(token_container,len,&idx,stack);
+    Object* obj = parse_object(token_container,len,&idx,stack,0);
     ResponseKV res;
     // memcpy(obj.arr,arr,100*sizeof(KeyValue));
     // obj.size = idx_arr;
-    res.object = obj;
+    res.object = *obj;
     res.lookup = lookup;
     // res.lookup = lookup;
 
