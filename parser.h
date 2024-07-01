@@ -40,10 +40,10 @@ typedef struct Value{
     union value value;
 }Value;
 
-typedef struct Array{
+struct Array{
     size_t size;
     Value* value_array;        
-}Array;
+};
 
 typedef struct KeyValue{
     Key Key;
@@ -52,20 +52,10 @@ typedef struct KeyValue{
 }KeyValue;
 
 // typedef struct Key Key;
-typedef struct Object{
+struct Object{
     KeyValue arr[100];
     size_t size;
-}Object;
-
-
-
-
-typedef union value value;
-
-// typedef struct KeyValue KeyValue;
-
-// typedef struct Value Value;
-
+};
 
 
 
