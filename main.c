@@ -54,6 +54,8 @@ int main(int argc,char* argv[]){
         }else if(kv.object.arr[i].Value.val_type==ARRAY){
             free(kv.object.arr[i].Value.value.arr_val->value_array);
             free(kv.object.arr[i].Value.value.arr_val);
+        }else if(kv.object.arr[i].Value.val_type==OBJECT_TYPE){
+            free(kv.object.arr[i].Value.value.obj_val);
         }
     }
 
