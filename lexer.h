@@ -12,7 +12,9 @@ enum TokenType{
     StringValue,
     KeyValueSeperator,
     Comma,
-    Integer
+    Integer,
+    ArrayStart,
+    ArrayEnd
 };
 
 struct Token{
@@ -44,6 +46,10 @@ char* enum_to_string(enum TokenType t_type){
         return "Comma";
     case Integer:
         return "Integer";
+    case ArrayStart:
+        return "ArrayStart";
+    case ArrayEnd:
+        return "ArrayEnd";
     default:
         return "Invalid";
         break;
@@ -160,6 +166,18 @@ int consume_token(char token,Token* token_container,int i,char* json_string,int 
         free(stringN);
         t.t_type = Integer;
         i = idx-1;
+        break;
+    case '[':
+        tc[0] = token;
+        tc[1] = '\0';
+        strcpy(t.ch,tc);
+        t.t_type = ArrayStart;
+        break;
+    case ']':
+        tc[0] = token;
+        tc[1] = '\0';
+        strcpy(t.ch,tc);
+        t.t_type = ArrayEnd;
         break;
     default:
         printf("Lexical Error: %c not valid\n",token);

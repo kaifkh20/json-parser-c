@@ -9,10 +9,15 @@ typedef struct Object Object;
 
 typedef union value value;
 
+typedef struct Array Array;
+
+// typedef struct Value Value;
+
 typedef enum ValueType{
     STRING,
     OBJECT_TYPE,
-    INTEGER
+    INTEGER,
+    ARRAY
 }ValueType;
 
 
@@ -20,19 +25,25 @@ typedef struct Key{
     char key[100];
 }Key;
 
+
 union value  
 {
     Object* obj_val;
     // Object obj_val;
     char string_val[100];
-
     __int64_t int_val;
+    Array* arr_val;
 };
 
 typedef struct Value{
     ValueType val_type;
     union value value;
 }Value;
+
+typedef struct Array{
+    size_t size;
+    Value* value_array;        
+}Array;
 
 typedef struct KeyValue{
     Key Key;
@@ -145,12 +156,13 @@ Object* parse_object(Token* token_container,int len,int* idx,struct Stack* stack
                 
                 memcpy(obj->arr,arr,100*sizeof(KeyValue));
                 obj->size = idx_arr;
-
+                // printf("size of object %li\n",obj->size);
                 // if(obj->size==0){
                 //     free(obj);
                 // }
                 // printf("Size of idx_arr %d",obj.size);
                 *idx = i;
+                // printf("index after obj %d\n",i);
                 return obj;
             }
         }else if(type_token==StringKey && isEmpty(stack)==0){
@@ -175,6 +187,49 @@ Object* parse_object(Token* token_container,int len,int* idx,struct Stack* stack
             idx_arr++;
             // strcpy(val.value)
         }
+        else if(type_token==ArrayStart){
+            Array *array = (Array*)malloc(sizeof(Array));
+            // Array array;
+            // array->value_array = ()
+            array->value_array = (Value*)malloc(sizeof(Value)*100);
+            int idx_Array = 0;
+            while(token_container[i].t_type!=ArrayEnd){
+
+                if(token_container[i].t_type==StringValue){
+                    // printf("reaching string in array");
+                    array->value_array[idx_Array].val_type = STRING;
+                    strcpy(array->value_array[idx_Array].value.string_val,token_container[i].ch);
+                    // printf("string after copying %s\n",array->value_array[idx_Array].value.string_val);
+                    idx_Array++; 
+                }else if(token_container[i].t_type==Integer){
+                    // printf("reaching int in array");
+                    array->value_array[idx_Array].val_type = INTEGER;
+                    array->value_array[idx_Array].value.int_val = atoi(token_container[i].ch);
+                    // printf("%li in array",array->value_array[idx_Array].value.int_val);
+                    idx_Array++;
+                }else if(token_container[i].t_type==StartObject){
+                    array->value_array[idx_Array].val_type = OBJECT_TYPE;
+                    *idx = i;
+                    // push(stack,"{");
+                    array->value_array[idx_Array].value.obj_val = parse_object(token_container,len,idx,stack,1);
+                    // printf("index after object %d\n",*idx);
+                    i = *idx;
+                    idx_Array++;   
+                }
+                i++;
+            }
+            array->size = idx_Array;
+            // arr[idx_arr]
+            arr[idx_arr].Value.val_type = ARRAY;
+            arr[idx_arr].Value.value.arr_val = array;
+            // arr[idx_arr].Value.value.arr_val->value_array = array->value_array;
+            // memcpy(arr[idx_arr].Value.value.arr_val.value_array,array.value_array,sizeof(Value)*100);
+            idx_arr++;
+
+            // char* s = arr[idx_arr].Value.value.arr_val->value_array[0].value.string_val;
+        }
+
+        
         
     }
         // if(i!=(len-1)&&isEmpty(stack)==1){
