@@ -90,6 +90,62 @@ char* lookup(char* key,ResponseKV* self){
     return "Invalid Key";
 }
 
+Object* parse_object(Token* token_container,int len,int* idx,struct Stack* stack,int if_sub_obj);
+
+
+Array* parse_array(Token* token_container,int i,int *idx,int len,struct Stack* stack){
+    
+    // printf("idx %d\n",*idx);
+    Array *array = (Array*)malloc(sizeof(Array));
+    // Array array;
+    // array->value_array = ()
+    array->value_array = (Value*)malloc(sizeof(Value)*100);
+    int idx_Array = 0;
+    while(token_container[i].t_type!=ArrayEnd){
+
+        if(token_container[i].t_type==StringValue){
+            // printf("reaching string in array");
+            array->value_array[idx_Array].val_type = STRING;
+            strcpy(array->value_array[idx_Array].value.string_val,token_container[i].ch);
+            // printf("string after copying %s\n",array->value_array[idx_Array].value.string_val);
+            idx_Array++; 
+        }else if(token_container[i].t_type==Integer){
+            // printf("reaching int in array");
+            array->value_array[idx_Array].val_type = INTEGER;
+            array->value_array[idx_Array].value.int_val = atoi(token_container[i].ch);
+            // printf("%li in array",array->value_array[idx_Array].value.int_val);
+            idx_Array++;
+        }else if(token_container[i].t_type==StartObject){
+            array->value_array[idx_Array].val_type = OBJECT_TYPE;
+            *idx = i;
+            // push(stack,"{");
+            array->value_array[idx_Array].value.obj_val = parse_object(token_container,len,idx,stack,1);
+            // printf("index after object %d\n",*idx);
+            i = *idx;
+            idx_Array++;   
+        }
+        else if(token_container[i].t_type==ArrayStart){
+            // printf("reaching here");
+            array->value_array[idx_Array].val_type = ARRAY;
+            array->value_array[idx_Array].value.arr_val = parse_array(token_container,i+1,idx,len,stack);
+            i = *idx;
+            idx_Array++;
+        }
+        i++;
+    }
+
+    array->size = idx_Array;
+    // array->size = idx_Array;
+    // // arr[idx_arr]
+    // arr[idx_arr].Value.val_type = ARRAY;
+    // arr[idx_arr].Value.value.arr_val = array;
+    // // arr[idx_arr].Value.value.arr_val->value_array = array->value_array;
+    // // memcpy(arr[idx_arr].Value.value.arr_val.value_array,array.value_array,sizeof(Value)*100);
+    // idx_arr++;
+    *idx = i;
+    return array;
+}
+
 Object* parse_object(Token* token_container,int len,int* idx,struct Stack* stack,int if_sub_obj){
 
     // printf("Function called with params %d %d\n",len,*idx);
@@ -188,49 +244,12 @@ Object* parse_object(Token* token_container,int len,int* idx,struct Stack* stack
             // strcpy(val.value)
         }
         else if(type_token==ArrayStart){
-            Array *array = (Array*)malloc(sizeof(Array));
-            // Array array;
-            // array->value_array = ()
-            array->value_array = (Value*)malloc(sizeof(Value)*100);
-            int idx_Array = 0;
-            while(token_container[i].t_type!=ArrayEnd){
-
-                if(token_container[i].t_type==StringValue){
-                    // printf("reaching string in array");
-                    array->value_array[idx_Array].val_type = STRING;
-                    strcpy(array->value_array[idx_Array].value.string_val,token_container[i].ch);
-                    // printf("string after copying %s\n",array->value_array[idx_Array].value.string_val);
-                    idx_Array++; 
-                }else if(token_container[i].t_type==Integer){
-                    // printf("reaching int in array");
-                    array->value_array[idx_Array].val_type = INTEGER;
-                    array->value_array[idx_Array].value.int_val = atoi(token_container[i].ch);
-                    // printf("%li in array",array->value_array[idx_Array].value.int_val);
-                    idx_Array++;
-                }else if(token_container[i].t_type==StartObject){
-                    array->value_array[idx_Array].val_type = OBJECT_TYPE;
-                    *idx = i;
-                    // push(stack,"{");
-                    array->value_array[idx_Array].value.obj_val = parse_object(token_container,len,idx,stack,1);
-                    // printf("index after object %d\n",*idx);
-                    i = *idx;
-                    idx_Array++;   
-                }
-                i++;
-            }
-            array->size = idx_Array;
-            // arr[idx_arr]
+            Array* array = parse_array(token_container,i+1,idx,len,stack);
             arr[idx_arr].Value.val_type = ARRAY;
             arr[idx_arr].Value.value.arr_val = array;
-            // arr[idx_arr].Value.value.arr_val->value_array = array->value_array;
-            // memcpy(arr[idx_arr].Value.value.arr_val.value_array,array.value_array,sizeof(Value)*100);
             idx_arr++;
-
-            // char* s = arr[idx_arr].Value.value.arr_val->value_array[0].value.string_val;
-        }
-
-        
-        
+            i = *idx;
+        }        
     }
         // if(i!=(len-1)&&isEmpty(stack)==1){
         //     // printf("")

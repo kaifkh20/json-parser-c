@@ -50,6 +50,11 @@ test("Checking for Object Values in Array",async()=>{
     expect(output).toEqual("Succesfully Parsed\nkey: <Array <Object> >\n")
 })
 
+test("Checking for Array in Array Values",async()=>{
+    const output = await runScript("test/tests_file/test10.json")
+    expect(output).toEqual("Succesfully Parsed\nkey: <Array <Array 1> >\n")
+})
+
 test("Checking Invalid Syntax check",async()=>{
     const output = await runScript("test/tests_file/test4.json")
     expect(output).toEqual("Parser Error : Invalid Syntax\nOperation Aborted\n")
