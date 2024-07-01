@@ -57,8 +57,9 @@ int main(int argc,char* argv[]){
             // if(kv.object.arr[i].Value.value.arr_val->value_array->)
             size_t size = kv.object.arr[i].Value.value.arr_val->size;
             for(int j=0;j<size;++j){
-                if(kv.object.arr[i].Value.value.arr_val->value_array[i].val_type==ARRAY)
-                    free(kv.object.arr[i].Value.value.arr_val->value_array);
+                if(kv.object.arr[i].Value.value.arr_val->value_array[j].val_type==ARRAY)
+                    free(kv.object.arr[i].Value.value.arr_val->value_array[j].value.arr_val);
+                    // free(kv.object.arr[i].Value.value.arr_val->value_array);
             }
             free(kv.object.arr[i].Value.value.arr_val->value_array);
             free(kv.object.arr[i].Value.value.arr_val);
