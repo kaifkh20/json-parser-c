@@ -31,7 +31,7 @@ union value
     Object* obj_val;
     // Object obj_val;
     char string_val[100];
-    __int64_t int_val;
+    long long int int_val;
     Array* arr_val;
 };
 

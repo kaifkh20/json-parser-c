@@ -1,4 +1,6 @@
 import {expect,test,beforeAll,afterAll} from "bun:test"
+// import "bun:os"
+import {hostname,platform} from "node:os"
 
 beforeAll(async()=>{
     const proc =  Bun.spawn(["make"])
@@ -6,7 +8,13 @@ beforeAll(async()=>{
 })
 
 async function runScript(file_path){
-    const proc = Bun.spawn(["./jp","-f",`${file_path}`,"--test"])
+    // if(os.plat )
+    // console.log(platform())
+    let run_ex = "./jp"
+    if(platform()==="win32"){
+       run_ex = "./jp-win.exe"
+    }
+    const proc = Bun.spawn([run_ex,"-f",`${file_path}`,"--test"])
     const output = (await new Response(proc.stdout).text())
 
     await proc.exited

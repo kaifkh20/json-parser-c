@@ -1,3 +1,7 @@
 {
-    "key5":["hi",1,["val"]]
+    "name" : "Kaif",
+    "address" : {
+        "location" : "KK"
+    },
+    "phone" : [900090,10]
 }
