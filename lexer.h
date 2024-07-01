@@ -11,7 +11,8 @@ enum TokenType{
     StringKey,
     StringValue,
     KeyValueSeperator,
-    Comma
+    Comma,
+    Integer
 };
 
 struct Token{
@@ -41,6 +42,8 @@ char* enum_to_string(enum TokenType t_type){
         return "StringValue";
     case Comma:
         return "Comma";
+    case Integer:
+        return "Integer";
     default:
         return "Invalid";
         break;
@@ -57,8 +60,10 @@ char next_token(char* json_string,int i){
 int consume_token(char token,Token* token_container,int i,char* json_string,int idx_tc){
 
     Token t;
-    // printf("%c token",token);
+    // printf("%c token\n",token);
     // printf("index %d",idx_tc);
+
+    // if(token>='0' && token<='9') printf("Number \n");
 
     int index = i;
     char *tc = (char*)malloc(sizeof(char)*2);
@@ -129,6 +134,32 @@ int consume_token(char token,Token* token_container,int i,char* json_string,int 
         tc[1] = '\0';
         strcpy(t.ch,tc);
         t.t_type = Comma;
+        break;
+    case '0' ... '9':
+        // printf("reaching here %c\n",token);
+        char *stringN = (char*)malloc(sizeof(char)*100);
+        strcpy(stringN,"");
+        // strcpy(stringN,&token);
+        // printf("%s\n",token_c)//
+        strncat(stringN,&token,1);
+        idx = i+1;
+        char token_c_n = next_token(json_string,idx);
+        // printf("%c token_c \n",token_c_n);
+        while(token_c_n>='0' && token_c_n<='9' && strlen(json_string)>idx){
+            // printf("%c\n",token_c);
+            // printf("reaching here %c\n",token_c_n);
+            strncat(stringN,&token_c_n,1);
+            // printf("%s after reaching\n",stringN);
+            ++idx;
+            token_c_n = next_token(json_string,idx);    
+        }
+        // printf("%s\n",stringN);
+        strcat(stringN,"\0");
+        strcpy(t.ch,stringN);
+        // printf("%s number\n",stringN);
+        free(stringN);
+        t.t_type = Integer;
+        i = idx-1;
         break;
     default:
         printf("Lexical Error: %c not valid\n",token);

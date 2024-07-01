@@ -11,7 +11,8 @@ typedef union value value;
 
 typedef enum ValueType{
     STRING,
-    OBJECT_TYPE
+    OBJECT_TYPE,
+    INTEGER
 }ValueType;
 
 
@@ -24,7 +25,8 @@ union value
     Object* obj_val;
     // Object obj_val;
     char string_val[100];
-        /* data */
+
+    __int64_t int_val;
 };
 
 typedef struct Value{
@@ -164,7 +166,15 @@ Object* parse_object(Token* token_container,int len,int* idx,struct Stack* stack
             arr[idx_arr].Value = val;
         
             idx_arr++;
-        }  
+        }else if(type_token==Integer){
+            Value val;
+            val.val_type = INTEGER;
+            val.value.int_val = atoi(token);
+            arr[idx_arr].Value = val;
+
+            idx_arr++;
+            // strcpy(val.value)
+        }
         
     }
         // if(i!=(len-1)&&isEmpty(stack)==1){

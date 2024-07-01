@@ -12,9 +12,12 @@ int main(int argc,char* argv[]){
             // printf(/)
             if(kv.object.arr[i].Value.val_type==OBJECT_TYPE){
                 printf("%s:<Object>\n",kv.object.arr[i].Key.key);
-                continue;
+                // continue;
+            }else if(kv.object.arr[i].Value.val_type==INTEGER){
+                printf("%s:%li\n",kv.object.arr[i].Key.key,kv.object.arr[i].Value.value.int_val);
+            }else{
+                printf("%s:%s\n",kv.object.arr[i].Key.key,kv.object.arr[i].Value.value.string_val);
             }
-            printf("%s:%s\n",kv.object.arr[i].Key.key,kv.object.arr[i].Value.value.string_val);
         }
     }
     
