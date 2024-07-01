@@ -42,13 +42,6 @@ int main(int argc,char* argv[]){
                     }   
                 }
                 printf(" >\n");
-                // printf("\n");
-                
-                // for(int j=0;j<kv.object.arr[i].Value.value.arr_val.size;++j){
-                //     printf("%s, ",kv.object.arr[i].Value.value.arr_val.value_array[j].value.string_val);
-                // }
-                // printf("\n");
-                // printf("%s")
             }
             else{
                 printf("%s:%s\n",kv.object.arr[i].Key.key,kv.object.arr[i].Value.value.string_val);
@@ -61,6 +54,12 @@ int main(int argc,char* argv[]){
         if(kv.object.arr[i].Value.val_type==OBJECT_TYPE){
             free(kv.object.arr[i].Value.value.obj_val);
         }else if(kv.object.arr[i].Value.val_type==ARRAY){
+            // if(kv.object.arr[i].Value.value.arr_val->value_array->)
+            size_t size = kv.object.arr[i].Value.value.arr_val->size;
+            for(int j=0;j<size;++j){
+                if(kv.object.arr[i].Value.value.arr_val->value_array[i].val_type==ARRAY)
+                    free(kv.object.arr[i].Value.value.arr_val->value_array);
+            }
             free(kv.object.arr[i].Value.value.arr_val->value_array);
             free(kv.object.arr[i].Value.value.arr_val);
         }else if(kv.object.arr[i].Value.val_type==OBJECT_TYPE){
