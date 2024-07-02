@@ -48,10 +48,23 @@ int main(int argc,char* argv[]){
             }
         }
     }
-    
+    else{
+        Value *value = kv.lookup("key",&kv);
+        Value *value1 = kv.lookup("key1",&kv);
+        Value *value2 = kv.lookup("key2",&kv);
+        Value *value3 = kv.lookup("key3",&kv);
 
-    kv.freemem(&kv);
+        printf("%s\n",typeOf(value));
+        printf("%s\n",typeOf(value1));
+        printf("%s\n",typeOf(value2));
+        printf("%s\n",typeOf(value3));
 
+        free_val(value);
+        free_val(value1);
+        free_val(value2);
+        free_val(value3);
+    }
+    // kv.freemem(&kv);
     // free(kv.lookup);
     // free(kv)
 

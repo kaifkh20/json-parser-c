@@ -48,6 +48,27 @@ void free_mem(ResponseKV* kv){ //Free Memory include only at the end of program
     
 }
 
+void free_val(Value* value){
+    if(value->val_type==OBJECT_TYPE){
+        free(value->value.obj_val);
+    }else if(value->val_type==ARRAY){
+        free(value->value.arr_val->value_array);
+        free(value->value.arr_val);
+    }
+    free(value);
+}
+
+char* typeOf(Value* value){
+    if(value->val_type==STRING){
+        return "\e[1;33mSTRING";
+    }else if(value->val_type==INTEGER){
+        return "\e[1;33mINTEGER";
+    }else if(value->val_type==OBJECT_TYPE){
+        return "\e[1;32mOBJECT";
+    }else if(value->val_type==ARRAY){
+        return "\e[1;32mARRAY";
+    }
+}
 
 
 #endif
