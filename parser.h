@@ -59,26 +59,30 @@ struct Object{
 
 
 
-struct ResponseKV{
+typedef struct ResponseKV{
     // KeyValue arr[100];
     Object object;
     // size_t size;
-    char* (*lookup)(char*,struct ResponseKV*);
-};
+    Value* (*lookup)(char*,struct ResponseKV*);
+    void (*freemem)(struct ResponseKV*);
+}ResponseKV;
 
-typedef struct ResponseKV ResponseKV; 
+// typedef struct ResponseKV ResponseKV; 
 
-char* lookup(char* key,ResponseKV* self){
 
+
+Value* lookup(char* key,ResponseKV* self){ // Freeing memory is user concern
+    Value* val = (Value*)malloc(sizeof(Value));
     for(int i=0;i<self->object.size;++i){
-
         if(strcmp(self->object.arr[i].Key.key,key)==0){
-            // if(self->object.arr[i].Value.value.string_val)
-            return self->object.arr[i].Value.value.string_val;
+            val->val_type = self->object.arr[i].Value.val_type;
+            val->value = self->object.arr[i].Value.value;
+            // return self->object.arr[i].Value;            
         }
     }
-    return "Invalid Key";
+    return val;
 }
+
 
 Object* parse_object(Token* token_container,int len,int* idx,struct Stack* stack,int if_sub_obj);
 
@@ -283,8 +287,9 @@ ResponseKV parser(Token* token_container,int len){
     // obj.size = idx_arr;
     res.object = *obj;
     res.lookup = lookup;
+    // res.freemem = free_mem;
     // res.lookup = lookup;
-
+    free(stack->array);
     free(stack);
     return res;
 }

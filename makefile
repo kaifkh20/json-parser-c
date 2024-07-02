@@ -1,10 +1,10 @@
 
-all : jp jp-win
+all : lin win
 
-jp: 
+lin: 
 		gcc -O3 main.c -o jp
 
-jp-win :
+win :
 	 x86_64-w64-mingw32-gcc -O3  main.c  -o jp-w
 
 clean-lin: 

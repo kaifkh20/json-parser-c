@@ -50,7 +50,7 @@ int main(int argc,char* argv[]){
     }
     
 
-    free_mem(kv);
+    kv.freemem(&kv);
 
     // free(kv.lookup);
     // free(kv)

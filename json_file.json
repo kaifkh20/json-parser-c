@@ -1,7 +1,1 @@
-{
-    "name" : "Kaif",
-    "address" : {
-        "location" : "KK"
-    },
-    "phone" : [900090,10]
-}
+{"key":{"key2":"value","key3":{}}}

@@ -1,11 +1,11 @@
 import {expect,test,beforeAll,afterAll} from "bun:test"
 // import "bun:os"
-import {hostname,platform} from "node:os"
+import {platform} from "node:os"
 
 beforeAll(async()=>{
-    let make = "jp"
+    let make = "lin"
     if(platform()==="win32"){
-        make = "jp-win"
+        make = "win"
     }
     const proc =  Bun.spawn(["make",make])
     await proc.exited

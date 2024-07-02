@@ -2,29 +2,9 @@
 #define JSON_PARSER_H
 #include "lexer.h"
 #include "parser.h"
+#include "utility_func.h"
 #include <ctype.h>
 
-void free_mem(ResponseKV kv){
-    // Freeing memory 
-    for(int i=0;i<kv.object.size;i++){
-        if(kv.object.arr[i].Value.val_type==OBJECT_TYPE){
-            free(kv.object.arr[i].Value.value.obj_val);
-        }else if(kv.object.arr[i].Value.val_type==ARRAY){
-            // if(kv.object.arr[i].Value.value.arr_val->value_array->)
-            size_t size = kv.object.arr[i].Value.value.arr_val->size;
-            for(int j=0;j<size;++j){
-                if(kv.object.arr[i].Value.value.arr_val->value_array[j].val_type==ARRAY)
-                    free(kv.object.arr[i].Value.value.arr_val->value_array[j].value.arr_val);
-                    // free(kv.object.arr[i].Value.value.arr_val->value_array);
-            }
-            free(kv.object.arr[i].Value.value.arr_val->value_array);
-            free(kv.object.arr[i].Value.value.arr_val);
-        }else if(kv.object.arr[i].Value.val_type==OBJECT_TYPE){
-            free(kv.object.arr[i].Value.value.obj_val);
-        }
-    }
-    
-}
 
 // #include <stdio.h>
 ResponseKV json_parser(int argc,char* argv[]){
@@ -70,6 +50,7 @@ ResponseKV json_parser(int argc,char* argv[]){
     // printf("Lexer completed\n");
     ResponseKV res;
     res = parser(res_lexer.token_container,res_lexer.length);    
+    res.freemem = free_mem;
 
     
     free(res_lexer.token_container);
