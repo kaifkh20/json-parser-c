@@ -49,24 +49,8 @@ int main(int argc,char* argv[]){
         }
     }
     
-    // Freeing memory 
-    for(int i=0;i<kv.object.size;i++){
-        if(kv.object.arr[i].Value.val_type==OBJECT_TYPE){
-            free(kv.object.arr[i].Value.value.obj_val);
-        }else if(kv.object.arr[i].Value.val_type==ARRAY){
-            // if(kv.object.arr[i].Value.value.arr_val->value_array->)
-            size_t size = kv.object.arr[i].Value.value.arr_val->size;
-            for(int j=0;j<size;++j){
-                if(kv.object.arr[i].Value.value.arr_val->value_array[j].val_type==ARRAY)
-                    free(kv.object.arr[i].Value.value.arr_val->value_array[j].value.arr_val);
-                    // free(kv.object.arr[i].Value.value.arr_val->value_array);
-            }
-            free(kv.object.arr[i].Value.value.arr_val->value_array);
-            free(kv.object.arr[i].Value.value.arr_val);
-        }else if(kv.object.arr[i].Value.val_type==OBJECT_TYPE){
-            free(kv.object.arr[i].Value.value.obj_val);
-        }
-    }
+
+    free_mem(kv);
 
     // free(kv.lookup);
     // free(kv)

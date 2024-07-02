@@ -3,7 +3,11 @@ import {expect,test,beforeAll,afterAll} from "bun:test"
 import {hostname,platform} from "node:os"
 
 beforeAll(async()=>{
-    const proc =  Bun.spawn(["make"])
+    let make = "jp"
+    if(platform()==="win32"){
+        make = "jp-win"
+    }
+    const proc =  Bun.spawn(["make",make])
     await proc.exited
 })
 
@@ -74,7 +78,11 @@ test("Check for Lexical Error",async()=>{
 })
 
 afterAll(()=>{
-    const proc = Bun.spawn(['make','clean'])
+    let stmnt = "clean-lin"
+    if(platform()==="win32"){
+        stmnt = "clean-win"
+    }
+    const proc = Bun.spawn(['make',stmnt])
     proc.exited
 })
 
