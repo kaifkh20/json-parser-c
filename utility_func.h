@@ -33,12 +33,12 @@ void free_mem_array(Array* array){
 
 void free_mem(ResponseKV* kv){ //Free Memory include only at the end of program
     // Freeing memory 
-    for(int i=0;i<kv->object.size;i++){
-        if(kv->object.arr[i].Value.val_type==OBJECT_TYPE){
-            free_mem_object(kv->object.arr[i].Value.value.obj_val);
-        }else if(kv->object.arr[i].Value.val_type==ARRAY){
+    for(int i=0;i<kv->response_value.obj.size;i++){
+        if(kv->response_value.obj.arr[i].Value.val_type==OBJECT_TYPE){
+            free_mem_object(kv->response_value.obj.arr[i].Value.value.obj_val);
+        }else if(kv->response_value.obj.arr[i].Value.val_type==ARRAY){
             // if(kv.object.arr[i].Value.value.arr_val->value_array->)
-            free_mem_array(kv->object.arr[i].Value.value.arr_val);
+            free_mem_array(kv->response_value.obj.arr[i].Value.value.arr_val);
         }
         // else if(kv->object.arr[i].Value.val_type==OBJECT_TYPE){
         //     free(kv->object.arr[i].Value.value.obj_val);

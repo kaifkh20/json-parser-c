@@ -57,11 +57,13 @@ struct Object{
     size_t size;
 };
 
-
-
 typedef struct ResponseKV{
     // KeyValue arr[100];
-    Object object;
+    enum RESPONSE_TYPE {OBJECT_RESPONSE,ARRAY_RESPONSE} RESPONSE_TYPE;
+    union response_value{
+        Object obj;
+        Array arr;
+    }response_value;
     // size_t size;
     Value* (*lookup)(char*,struct ResponseKV*);
     void (*freemem)(struct ResponseKV*);
@@ -73,10 +75,10 @@ typedef struct ResponseKV{
 
 Value* lookup(char* key,ResponseKV* self){ // Freeing memory is user concern
     Value* val = (Value*)malloc(sizeof(Value));
-    for(int i=0;i<self->object.size;++i){
-        if(strcmp(self->object.arr[i].Key.key,key)==0){
-            val->val_type = self->object.arr[i].Value.val_type;
-            val->value = self->object.arr[i].Value.value;
+    for(int i=0;i<self->response_value.obj.size;++i){
+        if(strcmp(self->response_value.obj.arr[i].Key.key,key)==0){
+            val->val_type = self->response_value.obj.arr[i].Value.val_type;
+            val->value = self->response_value.obj.arr[i].Value.value;
             // return self->object.arr[i].Value;            
         }
     }
@@ -281,11 +283,21 @@ ResponseKV parser(Token* token_container,int len){
     struct Stack* stack = createStack(len);
     // Object obj;
     int idx = 0;
-    Object* obj = parse_object(token_container,len,&idx,stack,0);
     ResponseKV res;
+    if(token_container[0].t_type==ArrayStart){
+        Array* arr = parse_array(token_container,1,&idx,len,stack);
+        res.response_value.arr = *arr;
+        res.RESPONSE_TYPE = ARRAY_RESPONSE;
+    }else if(token_container[0].t_type==StartObject){
+        Object* obj = parse_object(token_container,len,&idx,stack,0);
+        res.response_value.obj = *obj;
+        res.RESPONSE_TYPE = OBJECT_RESPONSE;
+    }else{
+        printf("Parser Error: Invalid Opening Tags\nOperation Aborted\n");
+        exit(EXIT_FAILURE);
+    }
     // memcpy(obj.arr,arr,100*sizeof(KeyValue));
     // obj.size = idx_arr;
-    res.object = *obj;
     res.lookup = lookup;
     // res.freemem = free_mem;
     // res.lookup = lookup;

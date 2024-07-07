@@ -4,37 +4,58 @@
 #include "../parser.h"
 
 void print_test(ResponseKV kv){
-    for(int i=0;i<kv.object.size;i++){
+    if(kv.RESPONSE_TYPE==ARRAY_RESPONSE){
+        printf("<Array ");
+        for(int i=0;i<kv.response_value.arr.size;++i){
+            if(kv.response_value.arr.value_array[i].val_type==STRING){
+                printf("%s",kv.response_value.arr.value_array[i].value.string_val);
+            }
+            else if(kv.response_value.arr.value_array[i].val_type==INTEGER){
+                printf("%lli",kv.response_value.arr.value_array[i].value.int_val);
+            }else if(kv.response_value.arr.value_array[i].val_type==ARRAY){
+                printf("Array");
+            }else if(kv.response_value.arr.value_array[i].val_type==OBJECT_TYPE){
+                printf("Object");
+            }
+            if(i!=kv.response_value.arr.size-1){
+                printf(", ");
+            }
+        }printf(">\n");
+        // printf("No object\n");
+        exit(EXIT_SUCCESS);
+    }
+
+    for(int i=0;i<kv.response_value.obj.size;i++){
         // printf(/)
-        if(kv.object.arr[i].Value.val_type==OBJECT_TYPE){
-            printf("%s:<Object>\n",kv.object.arr[i].Key.key);
+        if(kv.response_value.obj.arr[i].Value.val_type==OBJECT_TYPE){
+            printf("%s:<Object>\n",kv.response_value.obj.arr[i].Key.key);
             // continue;
-        }else if(kv.object.arr[i].Value.val_type==INTEGER){
-            printf("%s:%lli\n",kv.object.arr[i].Key.key,kv.object.arr[i].Value.value.int_val);
-        }else if(kv.object.arr[i].Value.val_type==ARRAY){
-            printf("%s: ",kv.object.arr[i].Key.key);
-            // printf("size of array %li\n",kv.object.arr[i].Value.value.arr_val->size);
+        }else if(kv.response_value.obj.arr[i].Value.val_type==INTEGER){
+            printf("%s:%lli\n",kv.response_value.obj.arr[i].Key.key,kv.response_value.obj.arr[i].Value.value.int_val);
+        }else if(kv.response_value.obj.arr[i].Value.val_type==ARRAY){
+            printf("%s: ",kv.response_value.obj.arr[i].Key.key);
+            // printf("size of array %li\n",kv.response_value.obj.arr[i].Value.value.arr_val->size);
             printf("<Array ");
-            for(int j=0;j<kv.object.arr[i].Value.value.arr_val->size;++j){
-                if(kv.object.arr[i].Value.value.arr_val->value_array[j].val_type ==INTEGER){
-                    printf("%lli",kv.object.arr[i].Value.value.arr_val->value_array[j].value.int_val);
+            for(int j=0;j<kv.response_value.obj.arr[i].Value.value.arr_val->size;++j){
+                if(kv.response_value.obj.arr[i].Value.value.arr_val->value_array[j].val_type ==INTEGER){
+                    printf("%lli",kv.response_value.obj.arr[i].Value.value.arr_val->value_array[j].value.int_val);
                 }
-                else if(kv.object.arr[i].Value.value.arr_val->value_array[j].val_type==OBJECT_TYPE){
+                else if(kv.response_value.obj.arr[i].Value.value.arr_val->value_array[j].val_type==OBJECT_TYPE){
                     printf("<Object>");
                 } 
-                else if(kv.object.arr[i].Value.value.arr_val->value_array[j].val_type==ARRAY){
-                    printf("<Array %li>",kv.object.arr[i].Value.value.arr_val->value_array[j].value.arr_val->size);
+                else if(kv.response_value.obj.arr[i].Value.value.arr_val->value_array[j].val_type==ARRAY){
+                    printf("<Array %li>",kv.response_value.obj.arr[i].Value.value.arr_val->value_array[j].value.arr_val->size);
                 }
-                else printf("%s",kv.object.arr[i].Value.value.arr_val->value_array[j].value.string_val);
+                else printf("%s",kv.response_value.obj.arr[i].Value.value.arr_val->value_array[j].value.string_val);
 
-                if(j!=kv.object.arr[i].Value.value.arr_val->size-1){
+                if(j!=kv.response_value.obj.arr[i].Value.value.arr_val->size-1){
                     printf(", ");
                 }   
             }
             printf(" >\n");
         }
         else{
-            printf("%s:%s\n",kv.object.arr[i].Key.key,kv.object.arr[i].Value.value.string_val);
+            printf("%s:%s\n",kv.response_value.obj.arr[i].Key.key,kv.response_value.obj.arr[i].Value.value.string_val);
         }
     }
 }
