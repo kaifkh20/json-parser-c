@@ -18,7 +18,8 @@ typedef enum ValueType{
     OBJECT_TYPE,
     INTEGER,
     ARRAY,
-    NULL_TYPE
+    NULL_TYPE,
+    BOOLEAN_TYPE
 }ValueType;
 
 
@@ -35,6 +36,7 @@ union value
     long long int int_val;
     Array* arr_val;
     void* null_val;
+    int bool_val;
 };
 
 typedef struct Value{
@@ -239,6 +241,11 @@ Object* parse_object(Token* token_container,int len,int* idx,struct Stack* stack
             val.value.null_val = NULL;
             arr[idx_arr].Value = val;
             idx_arr++;
+        }else if(type_token==BooleanTrue){
+          Value val;
+          val.val_type = BOOLEAN_TYPE;
+          val.value.bool_val = 1;
+          idx_arr++;
         }       
     }
         

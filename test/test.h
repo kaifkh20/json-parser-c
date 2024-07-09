@@ -18,7 +18,7 @@ void print_test(ResponseKV kv){
                 printf("Object");
             }else if(kv.response_value.arr.value_array[i].val_type==NULL_TYPE){
                 printf("null");
-            }
+            }else if(kv.response_value.arr.value_array[i].val_type==BOOLEA)
             if(i!=kv.response_value.arr.size-1){
                 printf(", ");
             }

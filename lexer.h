@@ -15,7 +15,9 @@ enum TokenType{
     Integer,
     ArrayStart,
     ArrayEnd,
-    NullValue
+    NullValue,
+    BooleanTrue,
+    BooleanFalse
 };
 
 struct Token{
@@ -53,6 +55,10 @@ char* enum_to_string(enum TokenType t_type){
         return "ArrayEnd";
     case NullValue:
         return "Null";
+    case BooleanTrue:
+        return "BooleanTrue";
+    case BooleanFalse:
+        return "BooleanFalse";
     default:
         return "Invalid";
         break;
@@ -203,7 +209,28 @@ int consume_token(char token,Token* token_container,int i,char* json_string,int 
             i = index-1;
         }
         break;
-        
+    case 't': 
+        index = i+1;
+        char true_[4];
+        true_[0] = 't';
+        for(int j=0;j<3;j++){
+            token_c = next_token(json_string,index);
+            // printf("%c,",token_c);
+            if(j==0 && token_c!='r') break;
+            if(j==1 && token_c!='u') break;
+            if(j==2 && token_c!='e') break;
+            true_[j+1] = token_c;
+            index++;
+        }
+        if(strcmp(true_,"true")==0){
+            // printf("here");
+            strcpy(t.ch,true_);
+            t.t_type = BooleanTrue;
+            // printf("%s",t.ch);
+            i = index-1;
+        }
+        break;
+
     default:
         printf("Lexical Error: %c not valid\n",token);
         exit(EXIT_FAILURE);
