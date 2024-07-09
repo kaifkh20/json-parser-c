@@ -1,4 +1,5 @@
 import {expect,test,beforeAll,afterAll} from "bun:test"
+import { exec } from "node:child_process"
 // import "bun:os"
 import {platform} from "node:os"
 
@@ -71,6 +72,21 @@ test("Checking for Array in Array Values",async()=>{
 //     const output = await runScript("test/tests_file/test11.json")
 //     expect(output).toEqual("Succesfully Parsed\n\e[1;32mSTRING\n\e[1;32mINTEGER\n\e[1;32mARRAY\n\e[1;32mOBJECT\n")
 // })
+
+test("Checking for Array as base value",async()=>{
+    const output = await runScript("test/tests_file/test11.json")
+    expect(output).toEqual("Succesfully Parsed\n<Array hi>\n")
+})
+
+test("Checking for Null value",async()=>{
+    const output = await runScript("test/tests_file/test13.json")
+    expect(output).toEqual("Succesfully Parsed\n<Array null>\n")
+})
+
+test("Checking for error string as base value",async()=>{
+    const output = await runScript("test/tests_file/test12.json")
+    expect(output).toEqual("Parser Error: Invalid Opening Tags\nOperation Aborted\n")
+})
 
 test("Checking Invalid Syntax check",async()=>{
     const output = await runScript("test/tests_file/test4.json")

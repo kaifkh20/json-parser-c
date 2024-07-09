@@ -16,6 +16,8 @@ void print_test(ResponseKV kv){
                 printf("Array");
             }else if(kv.response_value.arr.value_array[i].val_type==OBJECT_TYPE){
                 printf("Object");
+            }else if(kv.response_value.arr.value_array[i].val_type==NULL_TYPE){
+                printf("null");
             }
             if(i!=kv.response_value.arr.size-1){
                 printf(", ");
@@ -53,6 +55,8 @@ void print_test(ResponseKV kv){
                 }   
             }
             printf(" >\n");
+        }else if(kv.response_value.obj.arr[i].Value.val_type==NULL_TYPE){
+            printf("null");
         }
         else{
             printf("%s:%s\n",kv.response_value.obj.arr[i].Key.key,kv.response_value.obj.arr[i].Value.value.string_val);

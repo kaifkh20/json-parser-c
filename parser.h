@@ -17,7 +17,8 @@ typedef enum ValueType{
     STRING,
     OBJECT_TYPE,
     INTEGER,
-    ARRAY
+    ARRAY,
+    NULL_TYPE
 }ValueType;
 
 
@@ -33,6 +34,7 @@ union value
     char string_val[100];
     long long int int_val;
     Array* arr_val;
+    void* null_val;
 };
 
 typedef struct Value{
@@ -120,6 +122,13 @@ Array* parse_array(Token* token_container,int i,int *idx,int len,struct Stack* s
             i = *idx;
             idx_Array++;   
         }
+        else if(token_container[i].t_type==NullValue){
+            Value val;
+            val.val_type = NULL_TYPE;
+            val.value.null_val = NULL;
+            array->value_array[idx_Array] = val;
+            idx_Array++;
+        }       
         else if(token_container[i].t_type==ArrayStart){
             // printf("reaching here");
             array->value_array[idx_Array].val_type = ARRAY;
@@ -149,9 +158,6 @@ Object* parse_object(Token* token_container,int len,int* idx,struct Stack* stack
     KeyValue arr[100];
     size_t idx_arr = 0;
     Object *obj = (Object*)malloc(sizeof(Object));
-    // struct Stack* stack = createStack(len);
-
-    // printf("%s starting\n",peek(stack));
 
     int i = 0;
     // printf("%d,%d",*idx,++(*idx));
@@ -184,37 +190,18 @@ Object* parse_object(Token* token_container,int len,int* idx,struct Stack* stack
                 idx_arr++;
             // printf("returned object");
             }
-            // printf("Object returned %d\n",obj.size);
-            // printf("idx after obj returns %d",*idx);
-            // return parse_object(token_container,len,i++,arr,idx_arr);
         }
         else if(strcmp(token,"}")==0){
-            // printf("%d",strcmp("{",peek(stack))|| isEmpty(stack));
-            // printf("%s %d %d",peek(stack),strcmp("{",peek(stack)),isEmpty(stack));
-            // printf("%d is empty or not",isEmpty(stack) |);
-            // printf("%s before if",peek(stack));
             if((isEmpty(stack)==1 || strncmp("{",peek(stack),1)!=0)){
-                // printf("reaching here");
-                // printf("%d",isEmpty(stack));
-                // printf("%s",peek(stack));
-                // printf("%d",(isEmpty(stack)||strncmp("{",peek(stack),1)));
                 printf("Parser Error : Invalid Syntax\nOperation Aborted\n");
                 free(stack);
                 exit(EXIT_FAILURE);
             }
             pop(stack);        
             if(if_sub_obj){
-                
-                
                 memcpy(obj->arr,arr,100*sizeof(KeyValue));
                 obj->size = idx_arr;
-                // printf("size of object %li\n",obj->size);
-                // if(obj->size==0){
-                //     free(obj);
-                // }
-                // printf("Size of idx_arr %d",obj.size);
                 *idx = i;
-                // printf("index after obj %d\n",i);
                 return obj;
             }
         }else if(type_token==StringKey && isEmpty(stack)==0){
@@ -245,19 +232,19 @@ Object* parse_object(Token* token_container,int len,int* idx,struct Stack* stack
             arr[idx_arr].Value.value.arr_val = array;
             idx_arr++;
             i = *idx;
-        }        
+        }
+        else if(type_token==NullValue){
+            Value val;
+            val.val_type = NULL_TYPE;
+            val.value.null_val = NULL;
+            arr[idx_arr].Value = val;
+            idx_arr++;
+        }       
     }
-        // if(i!=(len-1)&&isEmpty(stack)==1){
-        //     // printf("")
-        //     printf("Parser Error : Invalid Syntax\nOperation Aborted\n");
-        //     exit(EXIT_FAILURE);
-        // }
         
     
 
     if(i==len && !isEmpty(stack)){
-        // printf("%d",isEmpty(stack));
-        // printf("reaching here");
         printf("%s\n",peek(stack));
         printf("Parser Error : Invalid Syntax\nOperation Aborted\n");
         free(stack);
@@ -265,15 +252,8 @@ Object* parse_object(Token* token_container,int len,int* idx,struct Stack* stack
     }
     memcpy(obj->arr,arr,100*sizeof(KeyValue));
     obj->size = idx_arr;
-
-    // if(obj->size==0){
-    //     free(obj);
-    // }
-    // printf("Size of idx_arr %d",obj.size);
     *idx = i;
     return obj;
-    // free(stack);
-
 }
 
 
