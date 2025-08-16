@@ -125,7 +125,7 @@ void print_object(Object* obj) {
             printf(", ");
         }
     }
-    printf(" }");
+    printf(" }\n");
 }
 
 /**
@@ -146,7 +146,7 @@ void print_array(Array* arr) {
             printf(", ");
         }
     }
-    printf(" ]");
+    printf(" ]\n");
 }
 const char* typeOf(Value* value) {
     if (!value) {
