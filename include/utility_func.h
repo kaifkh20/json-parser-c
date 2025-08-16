@@ -22,7 +22,7 @@ void free_mem_array(Array* array);
  * including nested objects/arrays/values.
  * @param kv A pointer to the ResponseKV object.
  */
-void free_mem(ResponseKV* kv);
+void free_mem(ResponseKV kv);
 
 /**
  * @brief Frees a Value object and its nested contents if they are dynamically allocated.

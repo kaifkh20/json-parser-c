@@ -168,8 +168,9 @@ int consume_token(char token,Token* token_container,int i,char* json_string,int 
         break;
 
     default:
-        printf("Lexical Error: %c not valid\n",token);
-        exit(EXIT_FAILURE);
+        fprintf(stderr,"Lexical Error: %c not valid\n",token);
+        free(tc);
+        return 0;
         break;
     }
 
@@ -216,6 +217,10 @@ struct Response lexer(char* json_string){
         char token = next_token(json_string,i);
         // printf("%c token\n",token);
         i = consume_token(token,token_container,i,json_string,idx_tc);
+        if(i==0){
+            free(token_container);
+            exit(EXIT_FAILURE);
+        }
         idx_tc++;
     }
     //debug_print(token_container,idx_tc);

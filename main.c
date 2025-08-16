@@ -41,8 +41,11 @@ int main(int argc,char* argv[]){
         if(value->val_type==OBJECT_TYPE){
             print_object(value->value.obj_val);
         }
+        free_val(value);
+        free_val(value1);
     }
     
-
+    free_mem(kv);
+    free(string);
     return 0;
 }

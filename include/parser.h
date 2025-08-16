@@ -57,7 +57,8 @@ struct Object {
 
 typedef enum ResponseType {
     OBJECT_RESPONSE,
-    ARRAY_RESPONSE
+    ARRAY_RESPONSE,
+    ERROR_RESPONSE
 } ResponseType;
 
 typedef struct ResponseKV {
@@ -68,7 +69,7 @@ typedef struct ResponseKV {
     } value;
 
     Value* (*lookup)(const char* key, struct ResponseKV*);
-    void   (*freemem)(struct ResponseKV*);
+    void   (*freemem)(struct ResponseKV);
 } ResponseKV;
 
 ResponseKV parser(Token* token_container, size_t len);

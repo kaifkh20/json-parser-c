@@ -58,16 +58,14 @@ void free_mem_array(Array* array) {
     free(array);
 }
 
-void free_mem(ResponseKV* kv) {
-    if (!kv) return;
-
-    if (kv->type == OBJECT_RESPONSE && kv->value.obj) {
-        free_mem_object(kv->value.obj);
-    } else if (kv->type == ARRAY_RESPONSE && kv->value.arr) {
-        free_mem_array(kv->value.arr);
+void free_mem(ResponseKV kv) {
+    
+    if (kv.type == OBJECT_RESPONSE && kv.value.obj) {
+        free_mem_object(kv.value.obj);
+    } else if (kv.type == ARRAY_RESPONSE && kv.value.arr) {
+        free_mem_array(kv.value.arr);
     }
 
-    free(kv);
 }
 
 // Helper to print a Value recursively

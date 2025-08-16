@@ -51,11 +51,26 @@ static Value* lookup(const char* key, struct ResponseKV* self) {
 static Array* parse_array(Token* token_container, size_t i, int* idx, int len, struct Stack* stack) {
     Array* array = (Array*)malloc(sizeof(Array));
     if (!array) return NULL;
-    array->value_array = (Value*)malloc(sizeof(Value) * 100);
+
+    size_t capacity = 100;
+    array->value_array = (Value*)malloc(sizeof(Value) * capacity);
     if (!array->value_array) { free(array); return NULL; }
 
     size_t idx_Array = 0;
-    while (token_container[i].t_type != ArrayEnd) {
+
+    while (i < (size_t)len && token_container[i].t_type != ArrayEnd) {
+        if (idx_Array >= capacity) {
+            capacity *= 2; // grow capacity (dynamic array)
+            Value* tmp = realloc(array->value_array, sizeof(Value) * capacity);
+            if (!tmp) {
+                // cleanup to avoid leaks
+                free(array->value_array);
+                free(array);
+                return NULL;
+            }
+            array->value_array = tmp;
+        }
+
         if (token_container[i].t_type == StringValue) {
             array->value_array[idx_Array].val_type = STRING;
             strcpy(array->value_array[idx_Array].value.string_val, token_container[i].ch);
@@ -88,6 +103,7 @@ static Array* parse_array(Token* token_container, size_t i, int* idx, int len, s
             array->value_array[idx_Array].value.bool_val = 0;
             idx_Array++;
         }
+
         i++;
     }
 
@@ -126,9 +142,9 @@ static Object* parse_object(Token* token_container, size_t len, int* idx, struct
             }
         } else if (type_token == EndObject) {
             if (isEmpty(stack) == 1 || strncmp("{", peek(stack), 1) != 0) {
-                printf("Parser Error : Invalid Syntax\nOperation Aborted\n");
-                free(stack);
-                exit(EXIT_FAILURE);
+                free(obj);
+                fprintf(stderr,"Parser Error : Invalid Syntax\nOperation Aborted\n");
+                return NULL; 
             }
             pop(stack);
 
@@ -184,9 +200,9 @@ static Object* parse_object(Token* token_container, size_t len, int* idx, struct
 
     if (i == len && !isEmpty(stack)) {
         printf("%s\n", peek(stack));
-        printf("Parser Error : Invalid Syntax\nOperation Aborted\n");
-        free(stack);
-        exit(EXIT_FAILURE);
+        fprintf(stderr,"Parser Error : Invalid Syntax\nOperation Aborted\n");
+        free(obj);
+        return NULL;
     }
 
     memcpy(obj->arr, temp_arr, 100 * sizeof(KeyValue));
@@ -205,15 +221,21 @@ ResponseKV parser(Token* token_container, size_t len) {
 
     if (token_container[0].t_type == ArrayStart) {
         Array* arr = parse_array(token_container, 1, &idx, (int)len, stack);
-        res.value.arr = arr;                 // store pointer, do NOT copy
-        res.type = ARRAY_RESPONSE;
+        if(arr==NULL){
+            arr = NULL;
+            res.type = ERROR_RESPONSE;
+        }// store pointer, do NOT copy
+        else res.type = ARRAY_RESPONSE;
+        res.value.arr = arr;      
+        
     } else if (token_container[0].t_type == StartObject) {
         Object* obj = parse_object(token_container, len, &idx, stack, 0);
+        if(obj==NULL){obj = NULL;res.type = ERROR_RESPONSE;}
+        else res.type = OBJECT_RESPONSE;
         res.value.obj = obj;                 // store pointer, do NOT copy
-        res.type = OBJECT_RESPONSE;
     } else {
-        printf("Parser Error: Invalid Opening Tags\nOperation Aborted\n");
-        exit(EXIT_FAILURE);
+        fprintf(stderr,"Parser Error: Invalid Opening Tags\nOperation Aborted\n");
+        res.type = ERROR_RESPONSE;
     }
 
     res.lookup  = lookup;
