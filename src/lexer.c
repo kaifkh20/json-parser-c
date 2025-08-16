@@ -1,69 +1,5 @@
-#ifndef LEXER_H
-#define LEXER_H
+#include "lexer.h"
 
-#include<stdio.h>
-#include <string.h>
-#include <stdlib.h>
-
-enum TokenType{
-    StartObject,
-    EndObject,
-    StringKey,
-    StringValue,
-    KeyValueSeperator,
-    Comma,
-    Integer,
-    ArrayStart,
-    ArrayEnd,
-    NullValue,
-    BooleanTrue,
-    BooleanFalse
-};
-
-struct Token{
-    char ch[100];
-    enum TokenType t_type;
-};
-
-
-typedef struct Token Token;
-
-struct Response{
-    Token* token_container;
-    size_t length;
-};
-
-char* enum_to_string(enum TokenType t_type){
-    switch (t_type)
-    {
-    case StartObject:
-        /* code */
-        return "StartObject";
-    case EndObject:
-        return "EndObject";
-    case StringKey:
-        return "StringKey";
-    case StringValue:
-        return "StringValue";
-    case Comma:
-        return "Comma";
-    case Integer:
-        return "Integer";
-    case ArrayStart:
-        return "ArrayStart";
-    case ArrayEnd:
-        return "ArrayEnd";
-    case NullValue:
-        return "Null";
-    case BooleanTrue:
-        return "BooleanTrue";
-    case BooleanFalse:
-        return "BooleanFalse";
-    default:
-        return "Invalid";
-        break;
-    }
-}
 
 char next_token(char* json_string,int i){
     // int index = *i;
@@ -109,7 +45,7 @@ int consume_token(char token,Token* token_container,int i,char* json_string,int 
         strcpy(string,"");
         // int idx = i;
         // idx++;
-        int idx = i+1;
+        size_t idx = i+1;
         char token_c = next_token(json_string,idx);
         while(token_c!='"' && idx<strlen(json_string)){
             strncat(string,&token_c,1);
@@ -244,16 +180,29 @@ int consume_token(char token,Token* token_container,int i,char* json_string,int 
     return ++i;
 }
 
-void debug_print(Token* token_container,int len){
-    for(int i=0;i<len;i++){
-        printf("<%s,%s>\n",token_container[i].ch,enum_to_string(token_container[i].t_type));
+
+
+void remove_whitespace(char* json_string) {
+    if (json_string == NULL) {
+        return;
     }
+
+    char* write_ptr = json_string;
+    char* read_ptr = json_string;
+
+    while (*read_ptr != '\0') {
+        if (!isspace((unsigned char)*read_ptr)) {
+            *write_ptr = *read_ptr;
+            write_ptr++;
+        }
+        read_ptr++;
+    }
+    *write_ptr = '\0'; // Add the null terminator at the end of the new string
 }
 
-
-
 struct Response lexer(char* json_string){
-
+    
+    remove_whitespace(json_string);
     size_t len_json_string = strlen(json_string);
 
     // printf("%s is the string,%zu is size\n",json_string,len_json_string);
@@ -263,13 +212,13 @@ struct Response lexer(char* json_string){
     // printf("reaching here");
     // int i = 0;
     int idx_tc = 0;
-    for (int i=0;i<len_json_string;){
+    for (size_t i=0;i<len_json_string;){
         char token = next_token(json_string,i);
         // printf("%c token\n",token);
         i = consume_token(token,token_container,i,json_string,idx_tc);
         idx_tc++;
     }
-    // debug_print(token_container,idx_tc);
+    //debug_print(token_container,idx_tc);
     struct Response resp;
     resp.token_container = token_container;
     resp.length = idx_tc;
@@ -280,4 +229,44 @@ struct Response lexer(char* json_string){
 }
 
 
-#endif
+const char* enum_to_string(enum TokenType t_type){
+    switch (t_type)
+    {
+    case StartObject:
+        /* code */
+        return "StartObject";
+    case EndObject:
+        return "EndObject";
+    case StringKey:
+        return "StringKey";
+    case StringValue:
+        return "StringValue";
+    case Comma:
+        return "Comma";
+    case Integer:
+        return "Integer";
+    case ArrayStart:
+        return "ArrayStart";
+    case ArrayEnd:
+        return "ArrayEnd";
+    case NullValue:
+        return "Null";
+    case BooleanTrue:
+        return "BooleanTrue";
+    case BooleanFalse:
+        return "BooleanFalse";
+    case KeyValueSeperator:
+        return "KeyValueSeperator";
+    default:
+        return "Invalid";
+        break;
+    }
+}
+
+void debug_print(Token* token_container,int len){
+    for(int i=0;i<len;i++){
+        printf("<%s,%s>\n",token_container[i].ch,enum_to_string(token_container[i].t_type));
+    }
+}
+
+
