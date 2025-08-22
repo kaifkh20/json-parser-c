@@ -60,6 +60,12 @@ describe("JSON Parser Output", () => {
     const { combined } = await runParser("test/tests_file/test7.json");
     expect(combined).toEqual("Succesfully Parsed\nkey:1");
   });
+  
+  test("Boolean as values", async () => {
+    const { combined } = await runParser("test/tests_file/test14.json");
+    expect(combined).toEqual("Succesfully Parsed\nkey:true");
+  });
+
 
   test("Array as values", async () => {
     const { combined } = await runParser("test/tests_file/test8.json");

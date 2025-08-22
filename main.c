@@ -21,7 +21,7 @@ int main(int argc,char* argv[]){
 
     char* string = (char*)malloc(fsize+1);
     size_t n = fread(string,fsize,1,file);
-
+    n = n;
     fclose(file);
 
     string [fsize] = 0;
@@ -33,16 +33,13 @@ int main(int argc,char* argv[]){
     }
     else{
         Value *value = kv.lookup("key",&kv);
-        Value *value1 = kv.lookup("key1",&kv);
 
         printf("%s\n",typeOf(value));
-        printf("%s\n",typeOf(value1));
         
         if(value->val_type==OBJECT_TYPE){
             print_object(value->value.obj_val);
         }
         free_val(value);
-        free_val(value1);
     }
     
     free_mem(kv);

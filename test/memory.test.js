@@ -56,6 +56,7 @@ describe("JSON Parser Memory Checks", () => {
     "test/tests_file/test11.json",
     "test/tests_file/test12.json",
     "test/tests_file/test13.json",
+    "test/tests_file/test14.json",
   ];
 
   for (const file of files) {
