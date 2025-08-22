@@ -1,1 +1,21 @@
-{"key":{"key1":"value"}}
+{
+  "string": "hello world",
+  "empty_string": "",
+  "number": 42,
+  "negative_number": -123.45,
+  "boolean_true": true,
+  "boolean_false": false,
+  "null_value": null,
+  "array": [1, "two", true, null, {"nested": "object"}, [10, 20]],
+  "empty_array": [],
+  "object": {
+    "nested_key": "nested_value",
+    "nested_number": 3.14159,
+    "nested_array": ["a", "b", "c"],
+    "deep_object": {
+      "key": "value",
+      "empty_object": {}
+    }
+  },
+  "empty_object": {}
+}

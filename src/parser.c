@@ -79,7 +79,12 @@ static Array* parse_array(Token* token_container, size_t i, int* idx, int len, s
             array->value_array[idx_Array].val_type = INTEGER;
             array->value_array[idx_Array].value.int_val = atoll(token_container[i].ch);
             idx_Array++;
-        } else if (token_container[i].t_type == StartObject) {
+        } else if (token_container[i].t_type == Float){
+            array->value_array[idx_Array].val_type = FLOAT;
+            array->value_array[idx_Array].value.float_val= atof(token_container[i].ch);
+            idx_Array++;
+        } 
+        else if (token_container[i].t_type == StartObject) {
             array->value_array[idx_Array].val_type = OBJECT_TYPE;
             *idx = (int)i;
             array->value_array[idx_Array].value.obj_val = parse_object(token_container, (size_t)len, idx, stack, 1);

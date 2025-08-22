@@ -11,6 +11,7 @@ void free_val(Value* value) {
             break;
 
         case INTEGER:
+        case FLOAT:
         case BOOLEAN_TYPE:
         case NULL_TYPE:
             // nothing dynamically allocated here
@@ -79,6 +80,9 @@ void print_value(Value* val) {
 
         case INTEGER:
             printf("%lli", val->value.int_val);
+            break;
+        case FLOAT:
+            printf("%lf", val->value.float_val);
             break;
 
         case BOOLEAN_TYPE:

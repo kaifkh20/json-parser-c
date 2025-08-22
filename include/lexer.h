@@ -18,8 +18,8 @@ enum TokenType {
     ArrayEnd,
     NullValue,
     BooleanTrue,
-    BooleanFalse
-
+    BooleanFalse,
+    Float
 };
 
 struct Token {

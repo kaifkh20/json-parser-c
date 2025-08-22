@@ -8,179 +8,162 @@ char next_token(char* json_string,int i){
 }
 
 
-int consume_token(char token,Token* token_container,int i,char* json_string,int idx_tc){
-
+int consume_token(char token, Token* token_container, int i, char* json_string, int idx_tc) {
+    int invalid_flag = 0;
     Token t;
-    // printf("%c token\n",token);
-    // printf("index %d",idx_tc);
-
-    // if(token>='0' && token<='9') printf("Number \n");
 
     int index = i;
     char *tc = (char*)malloc(sizeof(char)*2);
-    switch (token)
-    {
+    switch (token) {
     case '{':
-        // strncpy(t.ch,&token,1);
-        // strncpy(t.ch,token);
-        tc[0] = token;
-        tc[1] = '\0';
-        // strncat(t.ch,tc,1);
-        strcpy(t.ch,tc);
+        tc[0] = token; tc[1] = '\0';
+        strcpy(t.ch, tc);
         t.t_type = StartObject;
         break;
     case '}':
-
-        // tc = (char*)malloc(sizeof(char));
-        tc[0] = token;
-        tc[1] = '\0';
-        // strncat(t.ch,tc,1);
-        strcpy(t.ch,tc);
+        tc[0] = token; tc[1] = '\0';
+        strcpy(t.ch, tc);
         t.t_type = EndObject;
         break;
-
-    case '"':
-        // printf("here");
-        char *string = malloc(sizeof(char)*100);
-        strcpy(string,"");
-        // int idx = i;
-        // idx++;
-        size_t idx = i+1;
-        char token_c = next_token(json_string,idx);
-        while(token_c!='"' && idx<strlen(json_string)){
-            strncat(string,&token_c,1);
+    case '"': {
+        char *string = malloc(sizeof(char) * 100);
+        strcpy(string, "");
+        size_t idx = i + 1;
+        char token_c = next_token(json_string, idx);
+        while (token_c != '"' && idx < strlen(json_string)) {
+            strncat(string, &token_c, 1);
             ++idx;
-            token_c = next_token(json_string,idx);
+            token_c = next_token(json_string, idx);
         }
-        token_c = next_token(json_string,++idx);
-        // printf("tokenc after loop%c\n",token_c);
-        if(token_c==':'){
-            // printf("reached here");
-            strcpy(t.ch,string);
+        token_c = next_token(json_string, ++idx);
+        if (token_c == ':') {
+            strcpy(t.ch, string);
             t.t_type = StringKey;
-        }else{
-            strcpy(t.ch,string);
-            // t.ch = string;
+        } else {
+            strcpy(t.ch, string);
             t.t_type = StringValue;
         }
-        // string[strlen(string)]  = '\0';
-        // printf("%s ",t.ch);
-        // printf("string is %s %c is nexttoken\n",string,next_token(json_string,++idx));
         free(string);
-        i = idx-1;
-        // printf("%c last consumed",json_string[i]);
+        i = idx - 1;
         break;
-
+    }
     case ':':
-        // t.ch = &token;
-        tc[0] = token;
-        tc[1] = '\0';
-        // *tc = token+"\0";
-        // strncat(t.ch,tc,1);
-        strcpy(t.ch,tc);
+        tc[0] = token; tc[1] = '\0';
+        strcpy(t.ch, tc);
         t.t_type = KeyValueSeperator;
         break;
     case ',':
-        tc[0] = token;
-        tc[1] = '\0';
-        strcpy(t.ch,tc);
+        tc[0] = token; tc[1] = '\0';
+        strcpy(t.ch, tc);
         t.t_type = Comma;
         break;
-    case '0' ... '9':
-        // printf("reaching here %c\n",token);
-        char *stringN = (char*)malloc(sizeof(char)*100);
-        strcpy(stringN,"");
-        // strcpy(stringN,&token);
-        // printf("%s\n",token_c)//
-        strncat(stringN,&token,1);
-        idx = i+1;
-        char token_c_n = next_token(json_string,idx);
-        // printf("%c token_c \n",token_c_n);
-        while(token_c_n>='0' && token_c_n<='9' && strlen(json_string)>idx){
-            // printf("%c\n",token_c);
-            // printf("reaching here %c\n",token_c_n);
-            strncat(stringN,&token_c_n,1);
-            // printf("%s after reaching\n",stringN);
+    case '-':
+    case '0' ... '9': {
+        char *stringN = (char*)malloc(sizeof(char) * 100);
+        strcpy(stringN, "");
+        strncat(stringN, &token, 1);
+        size_t idx = i + 1;
+        char token_c_n = next_token(json_string, idx);
+        int count_of_points_in_float = 0;
+        while ((token_c_n >= '0' && token_c_n <= '9') || token_c_n == '.') {
+            if (token_c_n == '.') {
+                count_of_points_in_float++;
+                if (count_of_points_in_float > 1) {
+                    free(stringN);
+                    free(tc);
+                    return -1;
+                }
+            }
+            strncat(stringN, &token_c_n, 1);
             ++idx;
-            token_c_n = next_token(json_string,idx);    
+            token_c_n = next_token(json_string, idx);
         }
-        // printf("%s\n",stringN);
-        strcat(stringN,"\0");
-        strcpy(t.ch,stringN);
-        // printf("%s number\n",stringN);
+        strcpy(t.ch, stringN);
         free(stringN);
-        t.t_type = Integer;
-        i = idx-1;
+        t.t_type = (count_of_points_in_float == 0) ? Integer : Float;
+        i = idx - 1;
         break;
+    }
     case '[':
-        tc[0] = token;
-        tc[1] = '\0';
-        strcpy(t.ch,tc);
+        tc[0] = token; tc[1] = '\0';
+        strcpy(t.ch, tc);
         t.t_type = ArrayStart;
         break;
     case ']':
-        tc[0] = token;
-        tc[1] = '\0';
-        strcpy(t.ch,tc);
+        tc[0] = token; tc[1] = '\0';
+        strcpy(t.ch, tc);
         t.t_type = ArrayEnd;
         break;
-    case 'n':
-        index = i+1;
-        char null[4];
-        null[0] = 'n';
-        for(int j=0;j<3;j++){
-            token_c = next_token(json_string,index);
-            // printf("%c,",token_c);
-            if(j==0 && token_c!='u') break;
-            if(j==1 && token_c!='l') break;
-            if(j==2 && token_c!='l') break;
-            null[j+1] = token_c;
+    case 'n': {
+        index = i + 1;
+        char null[5] = {'n', '\0'};
+        for (int j = 0; j < 3; j++) {
+            char token_c = next_token(json_string, index);
+            if ((j == 0 && token_c != 'u') ||
+                (j == 1 && token_c != 'l') ||
+                (j == 2 && token_c != 'l')) {
+                free(tc);
+                return -1;
+            }
+            null[j + 1] = token_c;
             index++;
         }
-        if(strcmp(null,"null")==0){
-            // printf("here");
-            strcpy(t.ch,null);
-            t.t_type = NullValue;
-            // printf("%s",t.ch);
-            i = index-1;
-        }
+        strcpy(t.ch, null);
+        t.t_type = NullValue;
+        i = index - 1;
         break;
-    case 't': 
-        index = i+1;
-        char true_[4];
-        true_[0] = 't';
-        for(int j=0;j<3;j++){
-            token_c = next_token(json_string,index);
-            // printf("%c,",token_c);
-            if(j==0 && token_c!='r') break;
-            if(j==1 && token_c!='u') break;
-            if(j==2 && token_c!='e') break;
-            true_[j+1] = token_c;
+    }
+    case 't': {
+        index = i + 1;
+        char true_[5] = {'t', '\0'};
+        for (int j = 0; j < 3; j++) {
+            char token_c = next_token(json_string, index);
+            if ((j == 0 && token_c != 'r') ||
+                (j == 1 && token_c != 'u') ||
+                (j == 2 && token_c != 'e')) {
+                free(tc);
+                return -1;
+            }
+            true_[j + 1] = token_c;
             index++;
         }
-        if(strcmp(true_,"true")==0){
-            // printf("here");
-            strcpy(t.ch,true_);
-            t.t_type = BooleanTrue;
-            // printf("%s",t.ch);
-            i = index-1;
-        }
+        strcpy(t.ch, true_);
+        t.t_type = BooleanTrue;
+        i = index - 1;
         break;
-
+    }
+    case 'f': {
+        index = i + 1;
+        char false_[6] = {'f', '\0'};
+        for (int j = 0; j < 4; j++) {
+            char token_c = next_token(json_string, index);
+            if ((j == 0 && token_c != 'a') ||
+                (j == 1 && token_c != 'l') ||
+                (j == 2 && token_c != 's') ||
+                (j == 3 && token_c != 'e')) {
+                free(tc);
+                return -1;
+            }
+            false_[j + 1] = token_c;
+            index++;
+        }
+        strcpy(t.ch, false_);
+        t.t_type = BooleanFalse;
+        i = index - 1;
+        break;
+    }
     default:
-        fprintf(stderr,"Lexical Error: %c not valid\n",token);
+        fprintf(stderr, "Lexical Error: %c not valid\n", token);
         free(tc);
-        return 0;
-        break;
+        return -1;
     }
 
     free(tc);
-    
-    // printf("%s is char",t.ch);
+    if (invalid_flag == 1) return -1;
+
     token_container[idx_tc] = t;
     return ++i;
 }
-
 
 
 void remove_whitespace(char* json_string) {
@@ -204,7 +187,7 @@ void remove_whitespace(char* json_string) {
 struct Response lexer(char* json_string){
     
     remove_whitespace(json_string);
-    size_t len_json_string = strlen(json_string);
+    int len_json_string = strlen(json_string);
 
     // printf("%s is the string,%zu is size\n",json_string,len_json_string);
     // Token* token_container = (Token*)(sizeof(Token)*len_json_string);
@@ -213,11 +196,11 @@ struct Response lexer(char* json_string){
     // printf("reaching here");
     // int i = 0;
     int idx_tc = 0;
-    for (size_t i=0;i<len_json_string;){
+    for (int i=0;i<len_json_string;){
         char token = next_token(json_string,i);
         // printf("%c token\n",token);
         i = consume_token(token,token_container,i,json_string,idx_tc);
-        if(i==0){
+        if(i<=0){
             free(token_container);
             exit(EXIT_FAILURE);
         }

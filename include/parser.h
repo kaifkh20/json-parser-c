@@ -19,13 +19,15 @@ typedef enum ValueType {
     INTEGER,
     ARRAY,
     NULL_TYPE,
-    BOOLEAN_TYPE
+    BOOLEAN_TYPE,
+    FLOAT
 } ValueType;
 
 typedef union value {
     Object* obj_val;
     char string_val[100];
     long long int int_val;
+    double float_val;
     Array* arr_val;
     void* null_val;
     int bool_val;
