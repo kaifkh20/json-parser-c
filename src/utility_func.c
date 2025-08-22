@@ -156,23 +156,26 @@ void print_array(Array* arr) {
 }
 const char* typeOf(Value* value) {
     if (!value) {
-        return "\e[1;31m<NULL VALUE>"; // red for error/null
+        return "\e[1;31m<NULL VALUE>"; // red for error/null pointer
     }
 
     switch (value->val_type) {
         case STRING:
-            return "\e[1;33mSTRING";   // yellow
+            return "\e[1;33mSTRING";      // yellow
         case INTEGER:
-            return "\e[1;33mINTEGER";  // yellow
+            return "\e[1;33mINTEGER";     // yellow
+        case FLOAT:
+            return "\e[1;33mNUMBER";      // yellow (could distinguish if you want)
         case OBJECT_TYPE:
-            return "\e[1;32mOBJECT";   // green
+            return "\e[1;32mOBJECT";      // green
         case ARRAY:
-            return "\e[1;32mARRAY";    // green
+            return "\e[1;32mARRAY";       // green
         case NULL_TYPE:
-            return "\e[1;31mNULL";     // red
+            return "\e[1;31mNULL";        // red
         case BOOLEAN_TYPE:
-            return "\e[1;34mBOOLEAN";  // blue
+            return "\e[1;34mBOOLEAN";     // blue
+        // Optional: if you have special internal states like "UNDEFINED"
         default:
-            return "\e[1;35mUNKNOWN";  // magenta fallback
+            return "\e[1;35mUNKNOWN";     // magenta fallback
     }
 }

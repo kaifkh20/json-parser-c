@@ -59,28 +59,40 @@ int consume_token(char token, Token* token_container, int i, char* json_string, 
         break;
     case '-':
     case '0' ... '9': {
-        char *stringN = (char*)malloc(sizeof(char) * 100);
-        strcpy(stringN, "");
-        strncat(stringN, &token, 1);
+        char buffer[256];
+        size_t buf_idx = 0;
+
+        buffer[buf_idx++] = token; // first char (could be '-' or digit)
+
         size_t idx = i + 1;
         char token_c_n = next_token(json_string, idx);
+
         int count_of_points_in_float = 0;
+
         while ((token_c_n >= '0' && token_c_n <= '9') || token_c_n == '.') {
             if (token_c_n == '.') {
                 count_of_points_in_float++;
                 if (count_of_points_in_float > 1) {
-                    free(stringN);
                     free(tc);
-                    return -1;
+                    return -1; // invalid number
                 }
             }
-            strncat(stringN, &token_c_n, 1);
+
+            if (buf_idx >= sizeof(buffer) - 1) {
+                free(tc);
+                return -1; // too long
+            }
+
+            buffer[buf_idx++] = token_c_n;
             ++idx;
             token_c_n = next_token(json_string, idx);
         }
-        strcpy(t.ch, stringN);
-        free(stringN);
+
+        buffer[buf_idx] = '\0';
+
+        strcpy(t.ch, buffer);
         t.t_type = (count_of_points_in_float == 0) ? Integer : Float;
+
         i = idx - 1;
         break;
     }
@@ -233,6 +245,8 @@ const char* enum_to_string(enum TokenType t_type){
         return "Comma";
     case Integer:
         return "Integer";
+    case Float:
+        return "Float";
     case ArrayStart:
         return "ArrayStart";
     case ArrayEnd:

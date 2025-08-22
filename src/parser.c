@@ -174,7 +174,15 @@ static Object* parse_object(Token* token_container, size_t len, int* idx, struct
             temp_arr[idx_arr].Value.value.int_val = atoll(token);
             idx_arr++;
             expecting_key = 1;
-        } else if (type_token == ArrayStart && !expecting_key) {
+        } 
+        else if (token_container[i].t_type == Float){
+            temp_arr[idx_arr].Value.val_type = FLOAT;
+            temp_arr[idx_arr].Value.value.float_val = atof(token);
+            idx_arr++;
+            expecting_key = 1;
+        } 
+
+        else if (type_token == ArrayStart && !expecting_key) {
             Array* array = parse_array(token_container, i + 1, idx, len, stack);
             temp_arr[idx_arr].Value.val_type = ARRAY;
             temp_arr[idx_arr].Value.value.arr_val = array;
