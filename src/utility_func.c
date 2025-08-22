@@ -94,7 +94,9 @@ void print_value(Value* val) {
             break;
 
         case OBJECT_TYPE:
-            printf("<Object>");
+            printf("<Object ");
+            print_object(val->value.obj_val);
+            printf(">");
             break;
 
         case ARRAY: {
