@@ -53,7 +53,7 @@ describe("JSON Parser Output", () => {
 
   test("Object as values", async () => {
     const { combined } = await runParser("test/tests_file/test6.json");
-    expect(combined).toEqual("Succesfully Parsed\nkey1:<Object>");
+    expect(combined).toEqual("Succesfully Parsed\nkey1:<Object { key2_obj: value2_obj }\n>");
   });
 
   test("Integer as values", async () => {
