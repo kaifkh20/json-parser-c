@@ -23,7 +23,8 @@ A lightweight, modular JSON parser written in **C**. It provides a clean API to 
 │   ├── lexer.h         # Lexical analyzer (tokenizer)
 │   ├── parser.h        # Core parser and JSON data structures
 │   ├── utility_func.h  # Memory management + debugging helpers
-│   └── json_parser.h   # High-level parsing interface
+│   ├── json_parser.h # High-level parsing interface
+|   └── stack.h
 ├── src/
 │   ├── lexer.c
 │   ├── parser.c
