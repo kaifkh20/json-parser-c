@@ -115,10 +115,3 @@ make lin
 - Support for streaming large JSON files.
 - Helper functions for traversal/querying (like JSONPath).
 
-## License
-
-Add your preferred license (MIT, Apache-2.0, etc.).
-
----
-
-*README generated for the C JSON Parser project.*
